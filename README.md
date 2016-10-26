@@ -1,4 +1,3 @@
-
 # Creating a realtime stock price dashboard using HDP and HDF
 
 
@@ -6,7 +5,7 @@
 
 This lab will teach you how to use Hortonworks Data Platform and NiFi to monitor stock prices and display them on a dashboard. We will go through the following steps in order:
 
-* download and install HDP 2.3 Sandbox
+* download and install HDP 2.5 Sandbox
 * install NiFi and Solr on the HDP Sandbox
 * use NiFi to query stock prices of AAPL, HDP, etc. from Google Finance by making a HTTP call
 * do text processing to extract price on the returned HTTP response, in NiFi 
@@ -17,53 +16,78 @@ This is a typical Internet of Anything (IoAT) end-to-end application. The goal i
 
 Note: this lab will only work during US Stock market's operating hours: 9.30 AM to 4.30 PM Eastern Time.
 
+
+
 ## Step 1: Download and install the HDP Sandbox
 
-Download and install the HDP 2.3 Sandbox on your laptop by following these instructions:
+Download and install the HDP 2.5 Sandbox on your laptop by following these instructions:
 
 <http://hortonworks.com/products/hortonworks-sandbox/#install>
 
+Note the large list of tutorials (a.k.a additional free labs) available under the "Tutorials" link. (more on this in Step 2 below)
+
 The Sandbox requires 8GB or RAM and 50GB of hard disk space. If your laptop doesn’t have sufficient RAM, you can launch it on Microsoft Azure cloud for free. Azure gives a free 30-day trial. Sign up for the free Azure trial and follow these instructions to install the Sandbox:
 
-<http://hortonworks.com/blog/hortonworks-sandbox-with-hdp-2-3-is-now-available-on-microsoft-azure-gallery/> 
+<http://hortonworks.com/hadoop-tutorial/deploying-hortonworks-sandbox-on-microsoft-azure/> 
 
 You’ll be asked to specify the VM size while creating the Sandbox on Azure. Please make sure to use A4 or higher VM sizes as the Sandbox is quite resource-intensive. Note down the VM username and password as you'll need it to log in to the Sandbox later.
 
 
-
 ## Step 2: Log in as root user 
 
-You'll need root priveleges to finish this lab. There are different ways to log into the Sandbox as the root user, depending on whether it's running locally on your laptop or if it's running on Azure.
+You'll need root privileges to finish this lab. There are different ways to log into the Sandbox as the root user, depending on whether Sandbox is running locally on your laptop (and it's different for Vbox vs. VMware) or if it's running on Azure.
 
 ### Local Sandbox
-Start the sandbox, and note its IP address shown on the VBox/VMware screen. Add the IP address into your laptop's "hosts" file so you don't need to type the Sandbox's IP address and can reach it much more conveniently at "sandbox.hortonworks.com". You will need to add a line similar to this in your hosts file:
+Start the sandbox, and note its IP address shown on the VBox/VMware screen. Add the IP address into your laptop's "hosts" file so you don't need to type the Sandbox's IP address and can reach it much more conveniently at "sandbox.hortonworks.com." You will need to add a line similar to this in your hosts file:
 
 ```
 192.168.191.241 sandbox.hortonworks.com sandbox    
 ```
 
-Note: The IP address will likely be different for you, use that. 
+Note: The IP address will likely be different for you.
 
 The hosts file is located at `/etc/hosts` for Mac and Linux computers. For Windows it's normally at `\WINDOWS\system32\drivers\etc`. If it's not there, create one and add the entry as shown above.
 
-The username for SSH is "root", and the password is "hadoop". You'll be the root user once logged in. Mac and Linux users can log in by:
+The username for SSH is "root", and the password is "hadoop." You'll be the root user once logged in. 
 
-
-```
-$ ssh root@sandbox.hortonworks.com
+If you are using VirtualBox, Mac and Linux users can log in by:
 
 ```
+$ ssh root@sandbox.hortonworks.com -p 2222
+```
 
-Windows users can use the Putty client to SSH using "root" and "hadoop" as the username and password respectively. The hostname is "sandbox.hortonworks.com"
+Windows users can use the Putty client to SSH using "root" and "hadoop" as the username and password respectively. 
+
+If you are using VMWare you can do the same, but you'll find out quickly that the HDP2.5 Sandbox is using Docker technology and you will have to ssh to another Docker instance to continue the labs. To find the IP address of the Docker instance where Ambari is running, do 
+
+```
+docker ps
+```
+
+Find the heading "CONTAINER ID"  and make note of that value.  Then do
+
+```
+docker inspect 3c5e83f55983 | grep IPAddress
+```
+
+where 3c5e83f55983 was my CONTAINER ID (and yours will be different).   Make note of the IP-Address for the container and do
+
+```
+ssh 172.17.0.2
+```
+
+where 172.17.0.2 was my IP; yours may be different. Just like before the password is "hadoop."
+(see IMPORTANT steps at the end of this Step)
+
 
 ### Azure Sandbox
-Note down the public IP address of the Sandbox VM from the Azure Portal UI. Add the IP address into your laptop's "hosts" file so you don't need to type the Sandbox's IP address and can reach it much more conveniently at "sandbox.hortonworks.com". You will need to add a line similar to this in your hosts file:
+Note down the public IP address of the Sandbox VM from the Azure Portal UI. Add the IP address into your laptop's "hosts" file so you don't need to type the Sandbox's IP address and can reach it much more conveniently at "sandbox.hortonworks.com." You will need to add a line similar to this in your hosts file:
 
 ```
 10.144.39.48 sandbox.hortonworks.com sandbox    
 ```
 
-Note: The IP address will likely be different for you, use that. 
+Note: The IP address will likely be different for you.
 
 The hosts file is located at `/etc/hosts` for Mac and Linux computers. For Windows it's normally at `\WINDOWS\system32\drivers\etc`. If it's not there, create one and add the entry as shown above. 
 
@@ -77,40 +101,32 @@ $ ssh <your_vm_username>@sandbox.hortonworks.com
 ```
 The password is the VM password you specified while deploying the VM.
 
-Windows users can use the Putty client to SSH and log in to "sandbox.hortonworks.com". Use the username and password you specified while creating the VM for SSH credentials. Once logged in, you need to assume the root user identity. Do this:
+Windows users can use the Putty client to SSH and log in to "sandbox.hortonworks.com." Use the username and password you specified while creating the VM for SSH credentials. Once logged in, you need to assume the root user identity. Do this:
 
 ```
 sudo su
 ```
+
 Again, enter the same password you used to SSH in. Now you should be the root user.
 
 
+###   Important Sandbox set-up steps
+Whether you installed locally or on Azure, look back on the Sandbox download website where there is one tutorial that has important Sandbox set-up steps. Under the "Hello World" heading find the tutorial called "Learning the Ropes of the Hortonworks Sandbox" and do it. Be sure to run the command ambari-admin-password-reset in order to set Ambari's login/password to admin/admin. Also follow the lab to bring up Ambari in a browser and log in as admin.
 
 
-## Step 2: Install NiFi and Solr on HDP Sandbox
 
-Do the following on your Sandbox's shell prompt (make sure you're the root user!):
+## Step 3: Install NiFi and Solr on HDP Sandbox
 
-```
-VERSION=`hdp-select status hadoop-client | sed 's/hadoop-client - \([0-9]\.[0-9]\).*/\1/'`
-```
+Nifi and Solr are both available as services on HDP 2.5, but require some installation steps.
 
-Note: From now on, type all code fragments like the one shown above on your Sandbox's shell prompt.
+If you don't see Solr listed in Ambari, follow these instructions to add it:
+http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.0/bk_solr-search-installation/content/index.html
 
-The command above checks for the HDP version number and stores it as a temporary environment variable. Next, download the Ambari NiFi service:
+If you don't see Nifi, follow the instructions here:
+http://docs.hortonworks.com/HDPDocuments/HDF2/HDF-2.0.0/bk_ambari-installation/content/ch_getting_ready.html
 
-```
-git clone https://github.com/abajwa-hw/ambari-nifi-service.git /var/lib/ambari-server/resources/stacks/HDP/$VERSION/services/NIFI
-```   
 
-Restart Ambari:
-
-```
-service ambari restart
-
-```
-
-Log in to Ambari UI, using "admin" as username and "admin" as password by opening the following URL in your Laptop's browser:
+The main part of those instructions will have you log in to Ambari UI, using "admin" as username and "admin" as password (see Step 2 above to enable admin/admin) by opening the following URL in your laptop's browser:
 
 <http://sandbox.hortonworks.com:8080>
 
@@ -147,7 +163,9 @@ Create Solr collection:
 
 We're now ready to use NiFi and create the flow.
 
-## Step 3: Fetch stock prices from Google Finance 
+
+
+## Step 4: Fetch stock prices from Google Finance 
 
 We will use Google's Finance API to pull stock quotes. While the API has been officially deprecated, you can still issue a http call to Google Finance with stock symbols as query arguments and get the info back. Our http call will be for `GOOG`, `AAPL`, `GS`, `HDP`, `RHT` and `SBUX` quotes:
 
@@ -301,7 +319,7 @@ Set the Filename property to `${UUID()}` This will cause each downloaded file to
 
 Next, let's clean up the json.
 
-## Step 4: Replace text
+## Step 5: Replace text
 
 The http call to Google finance returns JSON text like this:
 
@@ -317,7 +335,7 @@ Now let's connect the `GetHTTP` processor you to the `ReplaceText` processor. Fo
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/7-connect-gethttp-replace-text.png)
 
-## Step 5: Split JSON to attributes
+## Step 6: Split JSON to attributes
 
 Now we have the raw JSON without the leading comment. Let's split it into its attributes so we can do downstream processing easily. Use the `SplitJSON` processor for it. The API docs of `SplitJSON` clearly mention what is going on (you can see the documentation for any processor by right-clicking the processor and selecting "usage" from the pop-up menu):
 
@@ -333,7 +351,7 @@ Connect the `ReplaceText` processor with `SplitJSON` for a successful match:
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/9-connect-replacetext-splitjson.png)
 
-## Step 6: Extract fields from JSON
+## Step 7: Extract fields from JSON
 
 We have the split JSON with us, but we need to extract the attributes of interest to us. Recall that we want to index the following attributes:
 
@@ -353,7 +371,7 @@ Connect the `SplitJSON` with this processor:
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/11-connect-splitjson-evaluatejsonpath.png)
 
-## Step 7: Fix timestamp
+## Step 8: Fix timestamp
 
 In order to work with Banana dashboard and Solr, we need to massage the date-time a little bit. Use the `UpdateAttribute` processor for this. In the processor's configuration, add a new property called "fixed_ts"
 
@@ -367,13 +385,13 @@ Create a connection between `EvaluateJsonPath` and this processor for a "matched
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/13-connect-evaluatejsonpath-updateattribute.png)
 
-## Step 8: Convert attributes to JSON for Solr
+## Step 9: Convert attributes to JSON for Solr
 
 We're now almost ready to push the flow into Solr. But before we do that, we need to convert the attributes into JSON as Solr accepts JSON via REST. Let's use the `AttributesToJson` processor for it. Keep the "Attributes List" property empty in its configuration so that it converts all attribute-value pairs to JSON (we're only using the fields of interest at this stage and have discarded others): 
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/14-configure-attribute-json.png)
 
-## Step 9: Push to Solr
+## Step 10: Push to Solr
 
 Let's push to Solr by using the `SendToSolr` processor. Configure it as shown in the next three diagrams:
 
@@ -390,7 +408,7 @@ Connect the processors, and also self-connect `SendToSolr` processor for "failur
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/25-connect-attributes-to-json-send-to-solr.png)
 
 
-## Step 10: Start the Flow and visualize in Banana
+## Step 11: Start the Flow and visualize in Banana
 
 We're all set now. Click on "play" icon on the toolbar (it should be a green arrow), and wait for a few minutes. Go to the Banana UI to visualize the flow:
 
