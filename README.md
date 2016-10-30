@@ -76,8 +76,8 @@ where 3c5e83f55983 was my CONTAINER ID (and yours will be different).   Make not
 ssh 172.17.0.2
 ```
 
-where 172.17.0.2 was my IP; yours may be different. Just like before the password is "hadoop."
-(see IMPORTANT steps at the end of this Step)
+where 172.17.0.2 was my IP - yours might be different. Just like before the password is "hadoop."  The Docker instance will ask you right away to create a new password.
+(see IMPORTANT at the end of this Step).  
 
 
 ### Azure Sandbox
