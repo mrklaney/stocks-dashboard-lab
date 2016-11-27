@@ -17,6 +17,12 @@ This is a typical Internet of Anything (IoAT) end-to-end application. The goal i
 Note: this lab will only work during US Stock market's operating hours: 9.30 AM to 4.30 PM Eastern Time.
 
 
+Audience:
+
+For those looking for an automated 'IOT' demo 
+For students enrolled into the "Technical Sales Professional" or the "Partnerworks Architecture Professional" course.
+
+
 
 ## Step 1: Download and install the HDP Sandbox
 
@@ -115,50 +121,96 @@ Whether you installed locally or on Azure, look back on the Sandbox download web
 
 
 
-## Step 3: IOT lab steps
 
-This portion of the lab is available as a Zeppelin notebook that automates the steps.
-
-Audience:
-
-For those looking for an automated 'IOT' demo with minimal CLI steps required
-For students enrolled into the "Technical Sales Professional" or the "Partnerworks Architecture Professional" course.
-Materials:
-
-Web version (readonly) of notebook available here
-Code available here
-
-To Install:
-
-The notebook should already be installed. Look at the list of notebooks for "Single View demo."
-If needed, install the notebook on current HDP sandbox (where Zeppelin is already installed):
-Install NiFi and Solr on HDP Sandbox
+## Step 3: Install Nifi and Solr
 
 Nifi and Solr are both available as services on HDP 2.5, but require some installation steps.
 
-If you don't see Solr listed in Ambari, follow these instructions to add it:
-http://docs.hortonworks.com/HDPDocuments/HDP2/HDP-2.5.0/bk_solr-search-installation/content/index.html
+In a command line, run (copy and paste) below as root to give zeppelin sudo priviledge
 
-If you don't see Nifi, follow the instructions here:
-http://docs.hortonworks.com/HDPDocuments/HDF2/HDF-2.0.0/bk_ambari-installation/content/ch_getting_ready.html
+`echo "zeppelin  ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`
+
+Also in the command line, run the below to enable zeppelin to log in to postgres
+
+```
+echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
+echo "host all all ::1/128 md5" >> /var/lib/pgsql/data/pg_hba.conf
+```
+
+Restart Ambari's Postgres
+`service postgresql restart`
+
+###Install Nifi
+
+a) We will install Nifi using the 'Install Wizard' in Ambari. Open Ambari (http://sandbox.hortonworks.com:8080) 
+On the bottom left -> Actions -> Add service -> check NiFi server -> Next -> Next -> Change any config you like 
+(e.g. install dir, port, setup_prebuilt or values in nifi.properties) -> Next -> Proceed Anyway -> Deploy 
+
+This will kick off the install which will run for a few minutes. 
+Do the restarts as Ambari requests. 
+
+Note: For all services to restart fully, it is best to “Turn off maintenance mode” while restarting. Or, at the end of the round of restarts, HDFS and Atlas may finish with a restart icon still next to them. You can also just ignore those extra restart requests.
 
 
-The main part of those instructions will have you log in to Ambari UI, using "admin" as username and "admin" as password (see Step 2 above to enable admin/admin) by opening the following URL in your laptop's browser:
+###Remove LZO compression
 
-<http://sandbox.hortonworks.com:8080>
+Nifi writes data to HDFS and may be set to use compression for more compact storage. However, the LZO codec has a separate license requirement which cannot be shipped with the Sandbox VM.  So, let's remove its use to avoid any errors. 
 
-Click on "Add Service" from the "Actions" dropdown menu in the bottom left of the Ambari dashboard:
+Click HDFS -> Configs -> in the “filter” field type 'lzo' (el-zee-oh) 
+–For io.compression.codecs remove 
+“,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec” (don't forget the leading comma) 
+– For io.compression.codec.lzo.class delete it completely using the red “Remove” button 
+– Save and restart services as instructed by Ambari
 
-On bottom left -> Actions -> Add service -> check NiFi server -> Next -> Next -> Next -> Deploy. By default NiFi port is set to 9090 and JVM memory size is 512MB. On successful deployment, you can log in to NiFi UI by going to:
 
-<http://sandbox.hortonworks.com:9090/nifi>
+###Run Nifi
+
+Open Nifi webui from Ambari -> Nifi -> Quick Links -> Nifi UI (or open a new tab http://sandbox.hortonworks.com:9090) 
+
+
+
+Download prebuilt Single_view_demo.xml template to your laptop from here 
+(https://github.com/abajwa-hw/single-view-demo/raw/master/template/Single_view_demo.xml) 
+Import the Single_view_demo.xml template info Nifi. Find the Operate menu (icon looks like a hand). 
+Click on the “Upload Template” icon and browse to the xml. 
+– Drag the Template icon from the upper toolbar onto a blank spot on the canvas. An “Add Template” wizard should pop up 
+– Click the pull down and chose “Single view demo” then Click “Add”. You should see 3 boxes. 
+
+
+
+– Double click the grey title-bar that says, “Push Tweets into HDFS”. You should see a different flow. 
+(to go back to top-level canvas, look to the bottom left corner to click on the level) 
+– Click and drag the screen. Find the processor (box) that says, “Grab Garden Hose”. Right click it. 
+– Choose Configure 
+– Click “Properties” tab. Fill out your Twitter credentials (see note below) 
+– Click and drag the screen. Find the processor (box) that says, “PutSolrContentStream”. Right click it. 
+– Choose Configure 
+– Click “Properties” tab -> Solr Location -> localhost:2181/solr
+
+_Do not start the flows yet_
+
+b) If needed, more detailed instructions on how to install Nifi on sandbox and import a template flow to ingest tweets available at here (http://hortonworks.com/hadoop-tutorial/learning-ropes-apachenifi/#section_2). Use the steps in Section 2: SETUP NIFI ON SANDBOX BY AMBARI WIZARD 
+More detail on using processors can be found http://hortonworks.com/hadoop-tutorial/learning-ropes-apache-nifi/
+c) Note that to monitor tweets, Twitter requires you to have an account and obtain developer keys by registering an “app”. Follow steps below to do this:
+Create a Twitter account and app and get your consumer key/token and access keys/tokens:
+Open https://apps.twitter.com
+sign in
+create new app
+fill anything
+create access tokens
+READY   
+Start Solr
+To start Solr,click on Ambari -> Dashboard -> Action -> Add Service -> Solr check box 
+Follow wizard 
+In the command line do
 
 Next, let's install Solr and configure the Banana dashboard.
 
-Set JAVA_HOME:
-```
-export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64
-```
+
+
+
+
+
 
 We'll use Banana as the dashboard and we've created its definition for you. Download it:
 
