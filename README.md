@@ -400,7 +400,7 @@ For each symbol, we get its real time value, percent change, etc. The fields of 
 Our goal is to extract these attribute values from an http response, index them into Solr and visualize them in Banana. Let's begin.
 
 
-Go to NiFi UI at <http://sandbox.hortonworks.com:9090/nifi>
+Go to NiFi UI at <http://sandbox.hortonworks.com:9090/nifi>  or   Ambari Dashboard -> Nifi -> Quick Links -> Nifi UI
 
 Create a new process group by dragging the Process Group icon to the UI:
 
