@@ -125,22 +125,6 @@ Whether you installed locally or on Azure, look back on the Sandbox download web
 
 Nifi and Solr are both available as services on HDP 2.5, but require some installation steps.
 
-In a command line, run (copy and paste) below as root to give zeppelin sudo priviledge
-
-`echo "zeppelin  ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers`
-
-Also in the command line, run the below to enable zeppelin to log in to postgres
-
-```
-echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
-echo "host all all ::1/128 md5" >> /var/lib/pgsql/data/pg_hba.conf
-```
-
-Restart Ambari's Postgres: 
-```
-service postgresql restart
-```
-
 ###Install Nifi
 
 a) We will install Nifi using the 'Install Wizard' in Ambari. Open Ambari (http://sandbox.hortonworks.com:8080) 
