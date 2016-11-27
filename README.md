@@ -155,7 +155,7 @@ Note: For all services to restart fully, it is best to “Turn off maintenance m
 
 ###Remove LZO compression
 
-Nifi writes data to HDFS and may be set to use compression for more compact storage. However, the LZO codec has a separate license requirement which cannot be shipped with the Sandbox VM.  So, let's remove its use to avoid any errors. 
+Nifi writes data to HDFS and may be set to use compression for more compact storage. However, the LZO codec requires a separate license  that is not shipped with the Sandbox VM.  So, let's remove its use to avoid any errors. 
 
 Click HDFS -> Configs -> in the “filter” field type 'lzo' (el-zee-oh) 
 –For io.compression.codecs remove 
