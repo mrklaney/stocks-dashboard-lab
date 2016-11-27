@@ -357,7 +357,7 @@ For each symbol, we get its real time value, percent change, etc. The fields of 
 | cp_fix 		| percent price change	| 
 | lt 			| timestamp				|
 
-Our goal is to extract these attribute values from a http response, index them into Solr and visualize them in Banana. Let's begin.
+Our goal is to extract these attribute values from an http response, index them into Solr and visualize them in Banana. Let's begin.
 
 
 Go to NiFi UI at <http://sandbox.hortonworks.com:9090/nifi>
@@ -369,7 +369,6 @@ Create a new process group by dragging the Process Group icon to the UI:
 Give it some name, eg: Stocks-Dashboard
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/2-create-process-group.png)
-
 Find the Processor Icon present in the top toolbar. It is the first icon in the toolbar. Drag and drop the processor icon to the workspace and search for "GetHTTP" processor:
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/3-add-get-http.png)
@@ -496,7 +495,6 @@ Email: dkumar[*at*]hortonworks[*dot*]com
 
 * [Ali Bajwa](https://github.com/abajwa-hw) for the NiFi service
 * Vladimir Zatkin for coming up with the original NiFi flow
-
 
 ***
 ***
