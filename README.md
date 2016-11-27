@@ -19,8 +19,8 @@ Note: this lab will only work during US Stock market's operating hours: 9.30 AM 
 
 Audience:
 
-For those looking for an automated 'IOT' demo 
-For students enrolled into the "Technical Sales Professional" or the "Partnerworks Architecture Professional" course.
+This demo is for those looking for an automated 'IOT' demo 
+In particular, this was designed for students enrolled into the "Technical Sales Professional" or the "Partnerworks Architecture Professional" course.
 
 
 
@@ -121,7 +121,6 @@ Whether you installed locally or on Azure, look back on the Sandbox download web
 
 
 
-
 ## Step 3: Install Nifi and Solr
 
 Nifi and Solr are both available as services on HDP 2.5, but require some installation steps.
@@ -137,8 +136,10 @@ echo "host all all 127.0.0.1/32 md5" >> /var/lib/pgsql/data/pg_hba.conf
 echo "host all all ::1/128 md5" >> /var/lib/pgsql/data/pg_hba.conf
 ```
 
-Restart Ambari's Postgres
-`service postgresql restart`
+Restart Ambari's Postgres: 
+```
+service postgresql restart
+```
 
 ###Install Nifi
 
@@ -167,49 +168,44 @@ Click HDFS -> Configs -> in the “filter” field type 'lzo' (el-zee-oh)
 
 Open Nifi webui from Ambari -> Nifi -> Quick Links -> Nifi UI (or open a new tab http://sandbox.hortonworks.com:9090) 
 
-
-
-Download prebuilt Single_view_demo.xml template to your laptop from here 
-(https://github.com/abajwa-hw/single-view-demo/raw/master/template/Single_view_demo.xml) 
-Import the Single_view_demo.xml template info Nifi. Find the Operate menu (icon looks like a hand). 
-Click on the “Upload Template” icon and browse to the xml. 
-– Drag the Template icon from the upper toolbar onto a blank spot on the canvas. An “Add Template” wizard should pop up 
-– Click the pull down and chose “Single view demo” then Click “Add”. You should see 3 boxes. 
-
-
-
-– Double click the grey title-bar that says, “Push Tweets into HDFS”. You should see a different flow. 
-(to go back to top-level canvas, look to the bottom left corner to click on the level) 
-– Click and drag the screen. Find the processor (box) that says, “Grab Garden Hose”. Right click it. 
-– Choose Configure 
-– Click “Properties” tab. Fill out your Twitter credentials (see note below) 
-– Click and drag the screen. Find the processor (box) that says, “PutSolrContentStream”. Right click it. 
-– Choose Configure 
-– Click “Properties” tab -> Solr Location -> localhost:2181/solr
-
-_Do not start the flows yet_
-
-b) If needed, more detailed instructions on how to install Nifi on sandbox and import a template flow to ingest tweets available at here (http://hortonworks.com/hadoop-tutorial/learning-ropes-apachenifi/#section_2). Use the steps in Section 2: SETUP NIFI ON SANDBOX BY AMBARI WIZARD 
-More detail on using processors can be found http://hortonworks.com/hadoop-tutorial/learning-ropes-apache-nifi/
-c) Note that to monitor tweets, Twitter requires you to have an account and obtain developer keys by registering an “app”. Follow steps below to do this:
-Create a Twitter account and app and get your consumer key/token and access keys/tokens:
-Open https://apps.twitter.com
-sign in
-create new app
-fill anything
-create access tokens
-READY   
-Start Solr
-To start Solr,click on Ambari -> Dashboard -> Action -> Add Service -> Solr check box 
-Follow wizard 
-In the command line do
-
 Next, let's install Solr and configure the Banana dashboard.
 
 
 
-
-
+###Install Solr
+To start Solr,click on Ambari -> Dashboard -> Action -> Add Service -> Solr check box
+Follow wizard
+In the command line do
+```
+su solr
+cp -r /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs /opt/lucidworks-hdpsearch/solr/server/solr/configsets/tweet_configs
+vi /opt/lucidworks-hdpsearch/solr/server/solr/configsets/tweet_configs/conf/solrconfig.xml
+```
+then search in vi by doing
+```
+/solr.ParseDateFieldUpdateProcessorFactory
+```
+Paste this
+```
+<str>EEE MMM d HH:mm:ss Z yyyy</str>
+```
+at the top of this lines with the format `<str> xxxxxxxxxxxxx </str>`
+press “i” to insert
+cntr + v to paste
+esc to get out of insert mode
+Then to save and exit
+```
+:x
+```
+Then change directories and download a json file we will use later
+```
+cd /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/
+mv default.json default.json.orig
+wget https://github.com/abajwa-hw/single-view-demo/raw/master/dashboard/default.json
+/opt/lucidworks-hdpsearch/solr/bin/solr create -c tweets -d tweet_configs -s 1 -rf 1 -p 8983
+```
+In order for Solr to restart without failing, open up Ambari Dashboard. Under the services do
+Solr -> Config - in "Filter..." type "lock  ->  under Advanced Solr-HDFS find "Delete write-lock file on HDFS" -> check the box 
 
 
 We'll use Banana as the dashboard and we've created its definition for you. Download it:
@@ -217,6 +213,7 @@ We'll use Banana as the dashboard and we've created its definition for you. Down
 ```
 wget https://raw.githubusercontent.com/vzlatkin/Stocks2HBaseAndSolr/master/Solr%20Dashboard.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 ```
+
 
 Start Solr:
 
@@ -229,8 +226,14 @@ Create Solr collection:
 ```
 /opt/lucidworks-hdpsearch/solr/bin/solr create -c stocks -d data_driven_schema_configs -s 1 -rf 1
 ```
+To see the Solr UI:     Solr -> Quick Links -> Solr UI
 
-We're now ready to use NiFi and create the flow.
+To see the Banana dashboard:          Solr -> Quick Links -> Solr UI ->  edit URL to something like http://sandbox.hortonworks.com:8983/solr/banana   ->  click index.html
+
+If needed, details (especially to clarify vi steps) can be found here (http://hortonworks.com/hadooptutorial/how-to-refine-and-visualize-sentiment-data/) under “Configure and Start SOLR”. Be sure, however,to use the wget above and not from the link.
+
+
+NiFi and Solr are ready, but first let's get some interesting data to analyze.
 
 
 
