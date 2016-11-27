@@ -115,7 +115,24 @@ Whether you installed locally or on Azure, look back on the Sandbox download web
 
 
 
-## Step 3: Install NiFi and Solr on HDP Sandbox
+## Step 3: IOT lab steps
+
+This portion of the lab is available as a Zeppelin notebook that automates the steps.
+
+Audience:
+
+For those looking for an automated 'IOT' demo with minimal CLI steps required
+For students enrolled into the "Technical Sales Professional" or the "Partnerworks Architecture Professional" course.
+Materials:
+
+Web version (readonly) of notebook available here
+Code available here
+
+To Install:
+
+The notebook should already be installed. Look at the list of notebooks for "Single View demo."
+If needed, install the notebook on current HDP sandbox (where Zeppelin is already installed):
+Install NiFi and Solr on HDP Sandbox
 
 Nifi and Solr are both available as services on HDP 2.5, but require some installation steps.
 
