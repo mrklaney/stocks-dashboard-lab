@@ -173,59 +173,38 @@ Next, let's install Solr and configure the Banana dashboard.
 
 
 ###Install Solr
-To start Solr,click on Ambari -> Dashboard -> Action -> Add Service -> Solr check box
+
+To get Solr started, click on Ambari -> Dashboard -> Action -> Add Service -> Solr check box
 Follow wizard
-In the command line do
-```
-su solr
-cp -r /opt/lucidworks-hdpsearch/solr/server/solr/configsets/data_driven_schema_configs /opt/lucidworks-hdpsearch/solr/server/solr/configsets/tweet_configs
-vi /opt/lucidworks-hdpsearch/solr/server/solr/configsets/tweet_configs/conf/solrconfig.xml
-```
-then search in vi by doing
-```
-/solr.ParseDateFieldUpdateProcessorFactory
-```
-Paste this
-```
-<str>EEE MMM d HH:mm:ss Z yyyy</str>
-```
-at the top of this lines with the format `<str> xxxxxxxxxxxxx </str>`
-press “i” to insert
-cntr + v to paste
-esc to get out of insert mode
-Then to save and exit
-```
-:x
-```
-Then change directories and download a json file we will use later
+
+In the command line let's save an old config file in prepartaion for bringing in a new one.
+Let's change directories and save an old json
 ```
 cd /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/
 mv default.json default.json.orig
-wget https://github.com/abajwa-hw/single-view-demo/raw/master/dashboard/default.json
-/opt/lucidworks-hdpsearch/solr/bin/solr create -c tweets -d tweet_configs -s 1 -rf 1 -p 8983
 ```
-In order for Solr to restart without failing, open up Ambari Dashboard. Under the services do
-Solr -> Config - in "Filter..." type "lock  ->  under Advanced Solr-HDFS find "Delete write-lock file on HDFS" -> check the box 
-
-
 We'll use Banana as the dashboard and we've created its definition for you. Download it:
 
 ```
 wget https://raw.githubusercontent.com/vzlatkin/Stocks2HBaseAndSolr/master/Solr%20Dashboard.json -O /opt/lucidworks-hdpsearch/solr/server/solr-webapp/webapp/banana/app/dashboards/default.json
 ```
+In order for Solr to restart without failing, open up Ambari Dashboard. Under the services do
+Solr -> Config - in "Filter..." type "lock  ->  under Advanced Solr-HDFS find "Delete write-lock file on HDFS" -> check the box 
 
 
-Start Solr:
+###Start Solr:
+Start by doing
 
 ```
 /opt/lucidworks-hdpsearch/solr/bin/solr start -c -z localhost:2181 
 ```
 
-Create Solr collection:
+Then create a Solr collection:
 
 ```
 /opt/lucidworks-hdpsearch/solr/bin/solr create -c stocks -d data_driven_schema_configs -s 1 -rf 1
 ```
+
 To see the Solr UI:     Solr -> Quick Links -> Solr UI
 
 To see the Banana dashboard:          Solr -> Quick Links -> Solr UI ->  edit URL to something like http://sandbox.hortonworks.com:8983/solr/banana   ->  click index.html
