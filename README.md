@@ -175,14 +175,6 @@ wget https://raw.githubusercontent.com/vzlatkin/Stocks2HBaseAndSolr/master/Solr%
 In order for Solr to restart without failing, open up Ambari Dashboard. Under the services do
 Solr -> Config - in "Filter..." type "lock  ->  under Advanced Solr-HDFS find "Delete write-lock file on HDFS" -> check the box 
 
-
-###Start Solr:
-Start by doing
-
-```
-/opt/lucidworks-hdpsearch/solr/bin/solr start -c -z localhost:2181 
-```
-
 Then create a Solr collection:
 
 ```
@@ -208,10 +200,10 @@ We will use Google's Finance API to pull stock quotes. While the API has been of
 http://finance.google.com/finance/info?client=ig&q=NASDAQ:GOOG,NASDAQ:AAPL,NYSE:GS,NASDAQ:HDP,NASDAQ:RHT,NASDAQ:SBUX
 ```
 
-Try to copy-paste this in your browser and you should get (invalid) JSON back:
+Try to copy-paste this in your browser and you should get (invalid) JSON back that looks similar to (but maybe not exactly  - stock info changes over time):
 
 ```
-// [ { "id": "304466804484872" ,"t" : "GOOG" ,"e" : "NASDAQ" ,"l" : "694.45" ,"l_fix" : "694.45" ,"l_cur" : "694.45" ,"s": "0" ,"ltt":"4:00PM EST" ,"lt" : "Jan 15, 4:00PM EST" ,"lt_dts" : "2016-01-15T16:00:02Z" ,"c" : "-20.27" ,"c_fix" : "-20.27" ,"cp" : "-2.84" ,"cp_fix" : "-2.84" ,"ccol" : "chr" ,"pcls_fix" : "714.72" } ,{ "id": "22144" ,"t" : "AAPL" ,"e" : "NASDAQ" ,"l" : "97.05" ,"l_fix" : "97.05" ,"l_cur" : "97.05" ,"s": "0" ,"ltt":"4:00PM EST" ,"lt" : "Jan 15, 4:00PM EST" ,"lt_dts" : "2016-01-15T16:00:01Z" ,"c" : "-2.47" ,"c_fix" : "-2.47" ,"cp" : "-2.48" ,"cp_fix" : "-2.48" ,"ccol" : "chr" ,"pcls_fix" : "99.52" } ,{ "id": "663137" ,"t" : "GS" ,"e" : "NYSE" ,"l" : "155.64" ,"l_fix" : "155.64" ,"l_cur" : "155.64" ,"s": "0" ,"ltt":"7:53PM EST" ,"lt" : "Jan 15, 7:53PM EST" ,"lt_dts" : "2016-01-15T19:53:40Z" ,"c" : "-5.75" ,"c_fix" : "-5.75" ,"cp" : "-3.56" ,"cp_fix" : "-3.56" ,"ccol" : "chr" ,"pcls_fix" : "161.39" } ,{ "id": "542031669134556" ,"t" : "HDP" ,"e" : "NASDAQ" ,"l" : "16.57" ,"l_fix" : "16.57" ,"l_cur" : "16.57" ,"s": "0" ,"ltt":"4:00PM EST" ,"lt" : "Jan 15, 4:00PM EST" ,"lt_dts" : "2016-01-15T16:00:01Z" ,"c" : "-0.64" ,"c_fix" : "-0.64" ,"cp" : "-3.72" ,"cp_fix" : "-3.72" ,"ccol" : "chr" ,"pcls_fix" : "17.21" } ,{ "id": "655693" ,"t" : "SBUX" ,"e" : "NASDAQ" ,"l" : "58.00" ,"l_fix" : "58.00" ,"l_cur" : "58.00" ,"s": "0" ,"ltt":"4:00PM EST" ,"lt" : "Jan 15, 4:00PM EST" ,"lt_dts" : "2016-01-15T16:00:01Z" ,"c" : "-0.98" ,"c_fix" : "-0.98" ,"cp" : "-1.66" ,"cp_fix" : "-1.66" ,"ccol" : "chr" ,"pcls_fix" : "58.98" } ]
+// [ { "id": "304466804484872" ,"t" : "GOOG" ,"e" : "NASDAQ" ,"l" : "761.68" ,"l_fix" : "761.68" ,"l_cur" : "761.68" ,"s": "0" ,"ltt":"1:00PM EST" ,"lt" : "Nov 25, 1:00PM EST" ,"lt_dts" : "2016-11-25T13:00:01Z" ,"c" : "+0.69" ,"c_fix" : "0.69" ,"cp" : "0.09" ,"cp_fix" : "0.09" ,"ccol" : "chg" ,"pcls_fix" : "760.99" } ,{ "id": "22144" ,"t" : "AAPL" ,"e" : "NASDAQ" ,"l" : "111.79" ,"l_fix" : "111.79" ,"l_cur" : "111.79" ,"s": "0" ,"ltt":"1:00PM EST" ,"lt" : "Nov 25, 1:00PM EST" ,"lt_dts" : "2016-11-25T13:00:04Z" ,"c" : "+0.56" ,"c_fix" : "0.56" ,"cp" : "0.50" ,"cp_fix" : "0.50" ,"ccol" : "chg" ,"pcls_fix" : "111.23" } ,{ "id": "663137" ,"t" : "GS" ,"e" : "NYSE" ,"l" : "211.38" ,"l_fix" : "211.38" ,"l_cur" : "211.38" ,"s": "0" ,"ltt":"1:00PM EST" ,"lt" : "Nov 25, 1:00PM EST" ,"lt_dts" : "2016-11-25T13:00:16Z" ,"c" : "-0.93" ,"c_fix" : "-0.93" ,"cp" : "-0.44" ,"cp_fix" : "-0.44" ,"ccol" : "chr" ,"pcls_fix" : "212.31" } ,{ "id": "542031669134556" ,"t" : "HDP" ,"e" : "NASDAQ" ,"l" : "9.46" ,"l_fix" : "9.46" ,"l_cur" : "9.46" ,"s": "0" ,"ltt":"1:00PM EST" ,"lt" : "Nov 25, 1:00PM EST" ,"lt_dts" : "2016-11-25T13:00:02Z" ,"c" : "+0.11" ,"c_fix" : "0.11" ,"cp" : "1.18" ,"cp_fix" : "1.18" ,"ccol" : "chg" ,"pcls_fix" : "9.35" } ,{ "id": "663462" ,"t" : "RHT" ,"e" : "NYSE" ,"l" : "78.81" ,"l_fix" : "78.81" ,"l_cur" : "78.81" ,"s": "0" ,"ltt":"1:02PM EST" ,"lt" : "Nov 25, 1:02PM EST" ,"lt_dts" : "2016-11-25T13:02:02Z" ,"c" : "+0.06" ,"c_fix" : "0.06" ,"cp" : "0.08" ,"cp_fix" : "0.08" ,"ccol" : "chg" ,"pcls_fix" : "78.75" } ,{ "id": "655693" ,"t" : "SBUX" ,"e" : "NASDAQ" ,"l" : "57.43" ,"l_fix" : "57.43" ,"l_cur" : "57.43" ,"s": "0" ,"ltt":"1:00PM EST" ,"lt" : "Nov 25, 1:00PM EST" ,"lt_dts" : "2016-11-25T13:00:02Z" ,"c" : "-0.16" ,"c_fix" : "-0.16" ,"cp" : "-0.28" ,"cp_fix" : "-0.28" ,"ccol" : "chr" ,"pcls_fix" : "57.59" } ]
 ```
 
 After a little clean up and converting it to valid JSON by hand (why was it invalid and what was the cleanup?), it looks like:
@@ -282,33 +274,115 @@ After a little clean up and converting it to valid JSON by hand (why was it inva
       "l_cur": "16.57",
       "s": "0",
       "ltt": "4:00PM EST",
-      "lt": "Jan 15, 4:00PM EST",
-      "lt_dts": "2016-01-15T16:00:01Z",
-      "c": "-0.64",
-      "c_fix": "-0.64",
-      "cp": "-3.72",
-      "cp_fix": "-3.72",
-      "ccol": "chr",
-      "pcls_fix": "17.21"
-    },
-    {
-      "id": "655693",
-      "t": "SBUX",
-      "e": "NASDAQ",
-      "l": "58.00",
-      "l_fix": "58.00",
-      "l_cur": "58.00",
-      "s": "0",
-      "ltt": "4:00PM EST",
-      "lt": "Jan 15, 4:00PM EST",
-      "lt_dts": "2016-01-15T16:00:01Z",
-      "c": "-0.98",
-      "c_fix": "-0.98",
-      "cp": "-1.66",
-      "cp_fix": "-1.66",
-      "ccol": "chr",
-      "pcls_fix": "58.98"
-    }
+{
+  "data": [
+    { 
+	"id": "304466804484872" ,
+	"t" : "GOOG" ,
+	"e" : "NASDAQ" ,
+	"l" : "761.68" ,
+	"l_fix" : "761.68" ,
+	"l_cur" : "761.68" ,
+	"s": "0" ,"ltt":"1:00PM EST" ,
+	"lt" : "Nov 25, 1:00PM EST" ,
+	"lt_dts" : "2016-11-25T13:00:01Z" ,
+	"c" : "+0.69" ,
+	"c_fix" : "0.69" ,
+	"cp" : "0.09" ,
+	"cp_fix" : "0.09" ,
+	"ccol" : "chg" ,
+	"pcls_fix" : "760.99" 
+    } ,
+    { 
+	"id": "22144" ,
+	"t" : "AAPL" ,
+	"e" : "NASDAQ" ,
+	"l" : "111.79" ,
+	"l_fix" : "111.79" ,
+	"l_cur" : "111.79" ,
+	"s": "0" ,
+	"ltt":"1:00PM EST" ,
+	"lt" : "Nov 25, 1:00PM EST" ,
+	"lt_dts" : "2016-11-25T13:00:04Z" ,
+	"c" : "+0.56" ,
+	"c_fix" : "0.56" ,
+	"cp" : "0.50" ,
+	"cp_fix" : "0.50" ,
+	"ccol" : "chg" ,
+	"pcls_fix" : "111.23" 
+    } ,
+    { 
+	"id": "663137" ,
+	"t" : "GS" ,
+	"e" : "NYSE" ,
+	"l" : "211.38" ,
+	"l_fix" : "211.38" ,
+	"l_cur" : "211.38" ,
+	"s": "0" ,
+	"ltt":"1:00PM EST" ,
+	"lt" : "Nov 25, 1:00PM EST" ,
+	"lt_dts" : "2016-11-25T13:00:16Z" ,
+	"c" : "-0.93" ,
+	"c_fix" : "-0.93" ,
+	"cp" : "-0.44" ,
+	"cp_fix" : "-0.44" ,
+	"ccol" : "chr" ,
+	"pcls_fix" : "212.31" 
+    } ,
+    { 
+	"id": "542031669134556" ,
+	"t" : "HDP" ,
+	"e" : "NASDAQ" ,
+	"l" : "9.46" ,
+	"l_fix" : "9.46" ,
+	"l_cur" : "9.46" ,
+	"s": "0" ,
+	"ltt":"1:00PM EST" ,
+	"lt" : "Nov 25, 1:00PM EST" ,
+	"lt_dts" : "2016-11-25T13:00:02Z" ,
+	"c" : "+0.11" ,
+	"c_fix" : "0.11" ,
+	"cp" : "1.18" ,
+	"cp_fix" : "1.18" ,
+	"ccol" : "chg" ,
+	"pcls_fix" : "9.35" 
+    } ,
+    { 
+	"id": "663462" ,
+	"t" : "RHT" ,
+	"e" : "NYSE" ,
+	"l" : "78.81" ,
+	"l_fix" : "78.81" ,
+	"l_cur" : "78.81" ,
+	"s": "0" ,
+	"ltt":"1:02PM EST" ,
+	"lt" : "Nov 25, 1:02PM EST" ,
+	"lt_dts" : "2016-11-25T13:02:02Z" ,
+	"c" : "+0.06" ,
+	"c_fix" : "0.06" ,
+	"cp" : "0.08" ,
+	"cp_fix" : "0.08" ,
+	"ccol" : "chg" ,
+	"pcls_fix" : "78.75" 
+    } ,
+    { 
+	"id": "655693" ,
+	"t" : "SBUX" ,
+	"e" : "NASDAQ" ,
+	"l" : "57.43" ,
+	"l_fix" : "57.43" ,
+	"l_cur" : "57.43" ,
+	"s": "0" ,
+	"ltt":"1:00PM EST" ,
+	"lt" : "Nov 25, 1:00PM EST" ,
+	"lt_dts" : "2016-11-25T13:00:02Z" ,
+	"c" : "-0.16" ,
+	"c_fix" : "-0.16" ,
+	"cp" : "-0.28" ,
+	"cp_fix" : "-0.28" ,
+	"ccol" : "chr" ,
+	"pcls_fix" : "57.59" 
+    } 
   ]
 }
 ```
