@@ -409,6 +409,9 @@ Create a new process group by dragging the Process Group icon to the UI:
 Give it some name, eg: Stocks-Dashboard
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/2-create-process-group.png)
+
+
+Double click the Stocks-Dashbard. Notice the clickable path change in the footer. 
 Find the Processor Icon present in the top toolbar. It is the first icon in the toolbar. Drag and drop the processor icon to the workspace and search for "GetHTTP" processor:
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/3-add-get-http.png)
