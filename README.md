@@ -474,7 +474,7 @@ We have the split JSON with us, but we need to extract the attributes of interes
 | cp_fix 		| percent price change	| 
 | lt 			| timestamp				| 
 
-In order to do this, use the `EvaluateJsonPath` processor and configure it as shown in the picture below. You'll need to add new properties in the config pop-up and assign them these key-value pairs:
+In order to do this, use the `EvaluateJsonPath` processor and configure it as shown in the picture below. You'll need to add new properties in the config pop-up and assign them these key-value pairs. Vertical characters are l (elles) and not 1 (ones):
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/10-configure-evaluate-json-path.png)
 
