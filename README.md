@@ -504,7 +504,7 @@ We're now almost ready to push the flow into Solr. But before we do that, we nee
 
 ## Step 10: Push to Solr
 
-Let's push to Solr by using the `SendToSolr` processor. Configure it as shown in the next three diagrams:
+Let's push to Solr by using the `PutSolrContentStream` processor. Configure it as shown in the next three diagrams:
 
 ![](https://raw.githubusercontent.com/DhruvKumar/stocks-dashboard-lab/master/images/22-configure-sendto-solr.png)
 
