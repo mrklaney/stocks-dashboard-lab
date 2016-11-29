@@ -185,7 +185,7 @@ To see the Solr UI:     Solr -> Quick Links -> Solr UI
 
 To see the Banana dashboard:          Solr -> Quick Links -> Solr UI ->  edit URL to something like http://sandbox.hortonworks.com:8983/solr/banana   ->  click index.html
 
-If needed, details (especially to clarify vi steps) can be found here (http://hortonworks.com/hadooptutorial/how-to-refine-and-visualize-sentiment-data/) under “Configure and Start SOLR”. Be sure, however,to use the wget above and not from the link.
+If needed, details (especially to clarify vi steps) can be found here (http://hortonworks.com/hadoop-tutorial/searching-data-solr/) under “Configure and Start SOLR”. Be sure, however,to use the wget above and not from the link.
 
 
 NiFi and Solr are ready, but first let's get some interesting data to analyze.
