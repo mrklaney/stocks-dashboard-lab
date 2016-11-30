@@ -209,8 +209,7 @@ Try to copy-paste this in your browser and you should get (invalid) JSON back th
 After a little clean up and converting it to valid JSON by hand (why was it invalid and what was the cleanup?), it looks like:
 
 ```
-
-
+{
   "data": [
     { 
 	"id": "304466804484872" ,
