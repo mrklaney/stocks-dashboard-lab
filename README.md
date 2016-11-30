@@ -468,7 +468,7 @@ You should see something like this: (play around with the time scale to view the
 
 This completes the lab. For any feedback/questions, email me at:
 
-Email: dkumar[*at*]hortonworks[*dot*]com
+Email: dkumar[*at*]hortonworks[*dot*]com  or mark@hortonworks.com
 
 ## Special Thanks:
 
