@@ -209,72 +209,8 @@ Try to copy-paste this in your browser and you should get (invalid) JSON back th
 After a little clean up and converting it to valid JSON by hand (why was it invalid and what was the cleanup?), it looks like:
 
 ```
-{
-  "data": [
-    {
-      "id": "304466804484872",
-      "t": "GOOG",
-      "e": "NASDAQ",
-      "l": "694.45",
-      "l_fix": "694.45",
-      "l_cur": "694.45",
-      "s": "0",
-      "ltt": "4:00PM EST",
-      "lt": "Jan 15, 4:00PM EST",
-      "lt_dts": "2016-01-15T16:00:02Z",
-      "c": "-20.27",
-      "c_fix": "-20.27",
-      "cp": "-2.84",
-      "cp_fix": "-2.84",
-      "ccol": "chr",
-      "pcls_fix": "714.72"
-    },
-    {
-      "id": "22144",
-      "t": "AAPL",
-      "e": "NASDAQ",
-      "l": "97.05",
-      "l_fix": "97.05",
-      "l_cur": "97.05",
-      "s": "0",
-      "ltt": "4:00PM EST",
-      "lt": "Jan 15, 4:00PM EST",
-      "lt_dts": "2016-01-15T16:00:01Z",
-      "c": "-2.47",
-      "c_fix": "-2.47",
-      "cp": "-2.48",
-      "cp_fix": "-2.48",
-      "ccol": "chr",
-      "pcls_fix": "99.52"
-    },
-    {
-      "id": "663137",
-      "t": "GS",
-      "e": "NYSE",
-      "l": "155.64",
-      "l_fix": "155.64",
-      "l_cur": "155.64",
-      "s": "0",
-      "ltt": "7:53PM EST",
-      "lt": "Jan 15, 7:53PM EST",
-      "lt_dts": "2016-01-15T19:53:40Z",
-      "c": "-5.75",
-      "c_fix": "-5.75",
-      "cp": "-3.56",
-      "cp_fix": "-3.56",
-      "ccol": "chr",
-      "pcls_fix": "161.39"
-    },
-    {
-      "id": "542031669134556",
-      "t": "HDP",
-      "e": "NASDAQ",
-      "l": "16.57",
-      "l_fix": "16.57",
-      "l_cur": "16.57",
-      "s": "0",
-      "ltt": "4:00PM EST",
-{
+
+
   "data": [
     { 
 	"id": "304466804484872" ,
