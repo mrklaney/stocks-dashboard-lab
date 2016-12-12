@@ -456,7 +456,9 @@ Connect the processors, and also self-connect `SendToSolr` processor for "failur
 
 ## Step 11: Start the Flow and visualize in Banana
 
-We're all set now. Click on "play" icon on the toolbar (it should be a green arrow), and wait for a few minutes. Go to the Banana UI to visualize the flow:
+We're all set now. Click on "play" icon on the toolbar (it should be a green arrow), and wait for a few minutes.  You may get a 302 or 500 error in the GetHTTP processor if it has problems getting data from the Google Financial website. There is nothing much that can be done but 1. wait for normal business hours, 2. it could be a weak network connection- try another connection, or 3. if during normal hours there is a problem on Google's end, then you just have to wait.
+
+Go to the Banana UI to visualize the flow:
 
 <http://sandbox.hortonworks.com:8983/solr/banana/index.html#/dashboard>
 
